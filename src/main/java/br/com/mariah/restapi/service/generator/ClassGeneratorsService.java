@@ -14,22 +14,11 @@ import java.util.List;
 @Log4j2
 @Service
 public class ClassGeneratorsService {
-
-    private final EntityGenerator entityGenerator;
-
-    private final RepositoryGenerator repositoryGenerator;
-
+    private final List<GeneratorService> generators;
     private final StorageService storageService;
 
 
     public void generate(ModelData modelData) {
-
-        List<UnitSourceGenerator> itens = new ArrayList<>();
-        itens.addAll(this.entityGenerator.generate(modelData));
-        itens.addAll(this.repositoryGenerator.generate(modelData));
-
-
-        storageService.store(itens);
-
+        this.generators.forEach(generatorService -> storageService.store(generatorService.generate(modelData)));
     }
 }
