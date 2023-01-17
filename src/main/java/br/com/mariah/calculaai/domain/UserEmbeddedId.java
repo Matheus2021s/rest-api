@@ -1,9 +1,7 @@
 package br.com.mariah.calculaai.domain;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.lang.String;
 import lombok.AllArgsConstructor;
@@ -12,22 +10,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
+@Embeddable
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table (
-	name = "User" 
-)
-public class UserEntity implements Serializable { 
+public class UserEmbeddedId implements Serializable { 
 
 	@Column (
-		name = "password" 
+		name = "login" 
 	)
-	private String password;
-	@EmbeddedId
-	private UserEmbeddedId id; 
+	private String login;
+	@Column (
+		name = "email" 
+	)
+	private String email; 
 
 }

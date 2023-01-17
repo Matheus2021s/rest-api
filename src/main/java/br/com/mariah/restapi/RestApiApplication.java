@@ -40,6 +40,7 @@ public class RestApiApplication implements CommandLineRunner {
                                 ParameterData.builder()
                                         .name("email")
                                         .dataType(String.class)
+                                        .isPrimaryKey(true)
                                         .build()
                         )
                 )

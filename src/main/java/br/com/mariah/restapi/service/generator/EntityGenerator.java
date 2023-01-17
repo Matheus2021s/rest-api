@@ -7,6 +7,7 @@ import lombok.*;
 import org.burningwave.core.classes.*;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
@@ -54,47 +55,147 @@ public class EntityGenerator implements GeneratorService {
                                                 .create("name")
                                                 .setValue(String.format("\"%s\"", modelData.getName()))
                                 )
+                )
+                .addConcretizedType(Serializable.class);
+
+
+
+        if (modelData.getIsComposePrimaryKey()) {
+
+            String embeddedName = String.format("%sEmbeddedId", modelData.getName());
+            String embeddedPackage = String.format("%s.domain", resourceUtils.getBasePackage());
+            UnitSourceGenerator embeddedUnitSource = UnitSourceGenerator
+                    .create(embeddedPackage);
+
+            ClassSourceGenerator embeddedEntityClass = ClassSourceGenerator.create(
+                            TypeDeclarationSourceGenerator
+                                    .create(
+                                            embeddedName
+                                    )
+                    )
+                    .addModifier(Modifier.PUBLIC)
+                    .addAnnotation(
+                            AnnotationSourceGenerator
+                                    .create(Embeddable.class)
+                    ).addAnnotation(
+                            AnnotationSourceGenerator
+                                    .create(Getter.class)
+                    ).addAnnotation(
+                            AnnotationSourceGenerator
+                                    .create(Setter.class)
+                    ).addAnnotation(
+                            AnnotationSourceGenerator
+                                    .create(AllArgsConstructor.class)
+                    ).addAnnotation(
+                            AnnotationSourceGenerator
+                                    .create(NoArgsConstructor.class)
+                    ).addAnnotation(
+                            AnnotationSourceGenerator
+                                    .create(Builder.class)
+                    )
+                    .addConcretizedType(Serializable.class);
+
+
+            modelData.getPrimaryKeys().forEach(parameterData -> {
+                embeddedEntityClass.addField(
+                        VariableSourceGenerator
+                                .create(
+                                        TypeDeclarationSourceGenerator
+                                                .create(parameterData.getDataType()),
+                                        parameterData.getName()
+                                )
+                                .addModifier(Modifier.PRIVATE)
+                                .addAnnotation(
+                                        AnnotationSourceGenerator
+                                                .create(Column.class)
+                                                .addParameter(
+                                                        VariableSourceGenerator
+                                                                .create("name")
+                                                                .setValue(String.format("\"%s\"", parameterData.getName()))
+                                                )
+                                )
                 );
+            });
 
+            modelData.getNonPrimaryKeys().forEach(parameterData -> {
+                classSource.addField(
+                        VariableSourceGenerator
+                                .create(
+                                        TypeDeclarationSourceGenerator
+                                                .create(parameterData.getDataType()),
+                                        parameterData.getName()
+                                )
+                                .addModifier(Modifier.PRIVATE)
+                                .addAnnotation(
+                                        AnnotationSourceGenerator
+                                                .create(Column.class)
+                                                .addParameter(
+                                                        VariableSourceGenerator
+                                                                .create("name")
+                                                                .setValue(String.format("\"%s\"", parameterData.getName()))
+                                                )
+                                )
+                );
+            });
 
-        Boolean composePrimaryKey = modelData.getIsComposePrimaryKey();
+            classSource.addField(
+                    VariableSourceGenerator
+                            .create(
+                                    TypeDeclarationSourceGenerator
+                                            .create(
+                                                    embeddedName
+                                            ),
+                                    "id"
+                            )
+                            .addModifier(Modifier.PRIVATE)
+                            .addAnnotation(
+                                    AnnotationSourceGenerator
+                                            .create(EmbeddedId.class)
+                            )
+            );
 
-        modelData.getParameters().forEach(parameterData -> {
+            unitSourceGenerator.addClass(classSource);
 
-                    VariableSourceGenerator parameter = VariableSourceGenerator
-                            .create(TypeDeclarationSourceGenerator
-                                    .create(parameterData.getDataType()), parameterData.getName())
-                            .addModifier(Modifier.PRIVATE);
+            embeddedUnitSource.addClass(embeddedEntityClass);
 
-                    if (parameterData.getIsPrimaryKey() && !composePrimaryKey) {
+            return List.of(unitSourceGenerator, embeddedUnitSource);
+        } else {
+            modelData.getParameters().forEach(parameterData -> {
+                        VariableSourceGenerator parameter = VariableSourceGenerator
+                                .create(TypeDeclarationSourceGenerator
+                                        .create(parameterData.getDataType()), parameterData.getName())
+                                .addModifier(Modifier.PRIVATE);
+
+                        if (parameterData.getIsPrimaryKey()) {
+                            parameter
+                                    .addAnnotation(
+                                            AnnotationSourceGenerator
+                                                    .create(Id.class)
+                                    )
+                                    .addAnnotation(
+                                            AnnotationSourceGenerator
+                                                    .create(GeneratedValue.class)
+                                                    .addParameter(VariableSourceGenerator.create("strategy")
+                                                            .setValue("GenerationType.IDENTITY"))
+                                    );
+                            unitSourceGenerator.addImport("jakarta.persistence.GenerationType");
+                        }
+
                         parameter
                                 .addAnnotation(
                                         AnnotationSourceGenerator
-                                                .create(Id.class)
-                                )
-                                .addAnnotation(
-                                        AnnotationSourceGenerator
-                                                .create(GeneratedValue.class)
-                                                .addParameter(VariableSourceGenerator.create("strategy")
-                                                        .setValue("GenerationType.IDENTITY"))
+                                                .create(Column.class)
+                                                .addParameter(
+                                                        VariableSourceGenerator
+                                                                .create("name")
+                                                                .setValue(String.format("\"%s\"", parameterData.getName()))
+                                                )
                                 );
-                        unitSourceGenerator.addImport("jakarta.persistence.GenerationType");
+                        classSource.addField(parameter);
                     }
+            );
 
-                    parameter
-                            .addAnnotation(
-                                    AnnotationSourceGenerator
-                                            .create(Column.class)
-                                            .addParameter(
-                                                    VariableSourceGenerator
-                                                            .create("name")
-                                                            .setValue(String.format("\"%s\"", parameterData.getName()))
-                                            )
-                            );
-                    classSource.addField(parameter);
-                }
-        );
-
+        }
 
         unitSourceGenerator.addClass(classSource);
 

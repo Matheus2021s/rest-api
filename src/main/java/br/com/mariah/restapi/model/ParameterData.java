@@ -1,5 +1,6 @@
 package br.com.mariah.restapi.model;
 
+import br.com.mariah.restapi.utils.StringUtils;
 import lombok.*;
 
 
@@ -11,6 +12,9 @@ import lombok.*;
 public class ParameterData {
 
     private String name;
+    public String getCamelNameFirstLetterUpper(){
+       return StringUtils.getCamelCaseFirstLetterUpper(this.name);
+    }
 
     @Builder.Default
     private Boolean isPrimaryKey = false;
