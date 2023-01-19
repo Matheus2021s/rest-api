@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Log4j2
@@ -17,6 +18,9 @@ public class ClassGeneratorsService {
 
 
     public void generate(ModelData modelData) {
-        this.generators.forEach(generatorService -> storageService.store(generatorService.generate(modelData)));
+        this.generators.forEach(generatorService ->
+                Optional.ofNullable(generatorService.generate(modelData))
+                        .ifPresent(unitSourceGenerators -> storageService.store(unitSourceGenerators))
+        );
     }
 }

@@ -19,11 +19,11 @@ import lombok.Setter;
 public class UserEmbeddedId implements Serializable { 
 
 	@Column (
-		name = "login" 
+		name = "LOGIN" 
 	)
 	private String login;
 	@Column (
-		name = "email" 
+		name = "EMAIL" 
 	)
 	private String email; 
 

@@ -1,11 +1,11 @@
 package br.com.mariah.restapi.model;
 
+import br.com.mariah.restapi.utils.StringUtils;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Builder
 @NoArgsConstructor
@@ -51,4 +51,28 @@ public class ModelData {
         return this.nonPrimaryKeys;
     }
 
+
+    public String getCamelNameFirstLetterUpper() {
+        return StringUtils.getCamelCaseFirstLetterUpper(this.name);
+    }
+
+    public String getCamelNameFirstLetterLower() {
+        return StringUtils.getCamelCaseFirstLetterLower(this.name);
+    }
+
+    public String getNameUpperSeparatedByUnderscore() {
+        return StringUtils.getUpperSeparatedByUnderscore(this.name);
+    }
+
+    public String getNameLowerSeparatedByUnderscore() {
+        return StringUtils.getLowerSeparatedByUnderscore(this.name);
+    }
+
+    public String getNameUpperSeparatedByDash() {
+        return StringUtils.getUpperSeparatedByDash(this.name);
+    }
+
+    public String getNameLowerSeparatedByDash() {
+        return StringUtils.getLowerSeparatedByDash(this.name);
+    }
 }

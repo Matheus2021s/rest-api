@@ -53,11 +53,10 @@ public class EntityGenerator implements GeneratorService {
                                 .addParameter(
                                         VariableSourceGenerator
                                                 .create("name")
-                                                .setValue(String.format("\"%s\"", modelData.getName()))
+                                                .setValue(String.format("\"%s\"", modelData.getNameUpperSeparatedByUnderscore()))
                                 )
                 )
                 .addConcretizedType(Serializable.class);
-
 
 
         if (modelData.getIsComposePrimaryKey()) {
@@ -111,7 +110,7 @@ public class EntityGenerator implements GeneratorService {
                                                 .addParameter(
                                                         VariableSourceGenerator
                                                                 .create("name")
-                                                                .setValue(String.format("\"%s\"", parameterData.getName()))
+                                                                .setValue(String.format("\"%s\"", parameterData.getNameUpperSeparatedByUnderscore()))
                                                 )
                                 )
                 );
@@ -132,7 +131,7 @@ public class EntityGenerator implements GeneratorService {
                                                 .addParameter(
                                                         VariableSourceGenerator
                                                                 .create("name")
-                                                                .setValue(String.format("\"%s\"", parameterData.getName()))
+                                                                .setValue(String.format("\"%s\"",  parameterData.getNameUpperSeparatedByUnderscore()))
                                                 )
                                 )
                 );
@@ -188,7 +187,7 @@ public class EntityGenerator implements GeneratorService {
                                                 .addParameter(
                                                         VariableSourceGenerator
                                                                 .create("name")
-                                                                .setValue(String.format("\"%s\"", parameterData.getName()))
+                                                                .setValue(String.format("\"%s\"",  parameterData.getNameUpperSeparatedByUnderscore()))
                                                 )
                                 );
                         classSource.addField(parameter);

@@ -19,12 +19,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 @Table (
-	name = "User" 
+	name = "USER" 
 )
 public class UserEntity implements Serializable { 
 
 	@Column (
-		name = "password" 
+		name = "PASSWORD" 
 	)
 	private String password;
 	@EmbeddedId
