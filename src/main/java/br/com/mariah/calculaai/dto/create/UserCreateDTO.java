@@ -1,6 +1,5 @@
 package br.com.mariah.calculaai.dto.create;
 
-import br.com.mariah.calculaai.domain.UserEmbeddedId;
 import br.com.mariah.calculaai.domain.UserEntity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -36,13 +35,9 @@ public class UserCreateDTO {
 
 	public UserEntity toEntity() {
 		return UserEntity.builder() 
-			.id( 
-				UserEmbeddedId.builder() 
-				.login(this.login) 
-				.email(this.email) 
-			.build() 
-			) 
+			.login(this.login) 
 			.password(this.password) 
+			.email(this.email) 
 			.build(); 
 	} 
 

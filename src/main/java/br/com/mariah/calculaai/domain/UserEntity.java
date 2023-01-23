@@ -1,8 +1,10 @@
 package br.com.mariah.calculaai.domain;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.lang.String;
@@ -23,11 +25,21 @@ import lombok.Setter;
 )
 public class UserEntity implements Serializable { 
 
+	@Id
+	@GeneratedValue (
+		strategy = GenerationType.IDENTITY 
+	)
+	@Column (
+		name = "LOGIN" 
+	)
+	private String login;
 	@Column (
 		name = "PASSWORD" 
 	)
 	private String password;
-	@EmbeddedId
-	private UserEmbeddedId id; 
+	@Column (
+		name = "EMAIL" 
+	)
+	private String email; 
 
 }

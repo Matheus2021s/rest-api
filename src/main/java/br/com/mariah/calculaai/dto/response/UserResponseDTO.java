@@ -37,9 +37,9 @@ public class UserResponseDTO {
 		UserEntity userEntity
 	) {
 		return UserResponseDTO.builder() 
-			.login(userEntity.getId().getLogin()) 
-			.email(userEntity.getId().getEmail()) 
+			.login(userEntity.getLogin()) 
 			.password(userEntity.getPassword()) 
+			.email(userEntity.getEmail()) 
 		.build(); 
 	} 
 

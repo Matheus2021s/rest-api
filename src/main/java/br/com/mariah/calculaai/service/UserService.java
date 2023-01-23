@@ -1,9 +1,9 @@
 package br.com.mariah.calculaai.service;
 
-import br.com.mariah.calculaai.domain.UserEmbeddedId;
 import br.com.mariah.calculaai.domain.UserEntity;
 import br.com.mariah.calculaai.exception.ResourceNotFoundException;
 import br.com.mariah.calculaai.repository.UserRepository;
+import java.lang.String;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +22,7 @@ public class UserService {
 	}
 	
 	public UserEntity findById(
-		UserEmbeddedId id
+		String id
 	) {
 		return this.repository.findById(id) 
 		.orElseThrow(()-> new ResourceNotFoundException(" User não encontrado!")); 
@@ -36,17 +36,17 @@ public class UserService {
 	
 	public UserEntity Update(
 		UserEntity entity,
-		UserEmbeddedId id
+		String id
 	) {
 		UserEntity entityFound = findById(id); 
-		entityFound.getId().setLogin(entity.getId().getLogin()); 
-		entityFound.getId().setEmail(entity.getId().getEmail()); 
+		entityFound.setLogin(entity.getLogin()); 
 		entityFound.setPassword(entity.getPassword()); 
+		entityFound.setEmail(entity.getEmail()); 
 		return entityFound; 
 	}
 	
 	public void delete(
-		UserEmbeddedId id
+		String id
 	) {
 		this.repository.delete(findById(id)); 
 	} 
