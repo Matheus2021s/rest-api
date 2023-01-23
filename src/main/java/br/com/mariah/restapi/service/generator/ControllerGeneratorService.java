@@ -144,20 +144,17 @@ public class ControllerGeneratorService implements GeneratorService {
                                             )
                             )
                     )
-                    .forEach(variableSourceGenerator -> getByIdMethod
-                            .addParameter(variableSourceGenerator));
+                    .forEach(getByIdMethod::addParameter);
 
 
-            StringBuilder sb = new StringBuilder();
-
-            sb.append(String.format("%sEmbeddedId id = %sEmbeddedId.builder()\n", modelData.getCamelNameFirstLetterUpper(), modelData.getCamelNameFirstLetterUpper()))
-                    .append(modelData.getPrimaryKeys().stream()
+            String sb = String.format("%sEmbeddedId id = %sEmbeddedId.builder()\n", modelData.getCamelNameFirstLetterUpper(), modelData.getCamelNameFirstLetterUpper()) +
+                    modelData.getPrimaryKeys().stream()
                             .map(ParameterData::getCamelNameFirstLetterLower)
                             .map(name -> String.format(".%s(%s)\n", name, name))
-                            .collect(Collectors.joining()))
-                    .append(".build();");
+                            .collect(Collectors.joining()) +
+                    ".build();";
 
-            getByIdMethod.addBodyCodeLine(sb.toString());
+            getByIdMethod.addBodyCodeLine(sb);
 
             String finalString = String.format("return ResponseEntity.ok(%sResponseDTO.of(this.%sService.findById(id)));", modelData.getCamelNameFirstLetterUpper(), modelData.getCamelNameFirstLetterLower());
 
@@ -169,19 +166,17 @@ public class ControllerGeneratorService implements GeneratorService {
         } else {
 
             modelData.getPrimaryKeys().stream().findFirst()
-                    .ifPresent(parameterData -> {
-                        getByIdMethod.addParameter(
-                                VariableSourceGenerator
-                                        .create(
-                                                TypeDeclarationSourceGenerator
-                                                        .create(parameterData.getDataType()),
-                                                parameterData.getCamelNameFirstLetterLower()
-                                        )
-                                        .addAnnotation(
-                                                AnnotationSourceGenerator.create(PathVariable.class)
-                                        )
-                        );
-                    });
+                    .ifPresent(parameterData -> getByIdMethod.addParameter(
+                            VariableSourceGenerator
+                                    .create(
+                                            TypeDeclarationSourceGenerator
+                                                    .create(parameterData.getDataType()),
+                                            parameterData.getCamelNameFirstLetterLower()
+                                    )
+                                    .addAnnotation(
+                                            AnnotationSourceGenerator.create(PathVariable.class)
+                                    )
+                    ));
 
             String parameterId = modelData.getPrimaryKeys().stream()
                     .map(ParameterData::getCamelNameFirstLetterLower)
